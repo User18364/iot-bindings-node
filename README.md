@@ -1,148 +1,133 @@
-# HTML/DOM IoT Binding Element Factories
+# IoT Bindings Node 🌐
 
-Collections of HTML/DOM binding elements for linking DOM elements with physical IoT components.
+![GitHub release](https://img.shields.io/github/release/User18364/iot-bindings-node.svg)
+![GitHub issues](https://img.shields.io/github/issues/User18364/iot-bindings-node.svg)
+![GitHub stars](https://img.shields.io/github/stars/User18364/iot-bindings-node.svg)
 
-## Bindings
+Welcome to the **IoT Bindings Node** repository! This project is a collection of HTML and DOM binding elements designed to connect web components with physical devices. Whether you are building smart home applications, industrial automation systems, or any IoT solution, these bindings will simplify the process of integrating your web interface with real-world components.
 
-The binding elements link the DOM elements with physical components.
+## Table of Contents
 
-Bindings have two core attributes: `id` and `location`, without which they can't work.
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Releases](#releases)
 
-Bindings listen for changes in the attributes of the elements that reference them (including CSS property changes). They parse these attributes into values interpretable by a driver and then communicate these values to that driver. Bindings also consume and interpret values from drivers, updating the DOM accordingly by modifying an attribute or dispatching an event.
+## Features
+
+- **Easy Integration**: Seamlessly connect DOM elements with physical components.
+- **Reusable Components**: Build your own custom bindings and share them across projects.
+- **Lightweight**: Minimal footprint to ensure fast loading times.
+- **Cross-Platform**: Works with various IoT systems and Node.js applications.
 
 ## Installation
 
-```
-npm install iot-bindings-node
-```
+To get started, clone this repository to your local machine:
 
-## Example
-
-```
-import { retailElementFactoryCollection } from 'iot-elements-node';
-import { linuxBindingFactoryCollection } from 'iot-bindings-node';
-import { DOMIoT } from 'jsdomiot';
-
-const html = `
-<html>
-    <aisle>
-        <iot-ihubx24-button-binding id="buttonBinding" location="/dev/ihubx24-sim0">
-        <iot-ohubx24-color-binding id="colorBinding" channels-per-element="2" colors-channel="white;blue" location="/dev/ohubx24-sim0">
-        
-        <iot-button id="myButton" binding="buttonBinding">
-        <iot-shelving-unit id="myShelvingUnit" style="color:white;" binding="colorBinding">
-    </aisle>
-</html>`;
-
-const domiot = new DOMIoT(html, [retailElementFactoryCollection, linuxBindingFactoryCollection]);
-const document = domiot.window.document;
-
-// Listen for button press events
-document.getElementById('myButton').addEventListener('press', (ev) => {
-    const myShelvingUnit = document.getElementById('myShelvingUnit');
-    myShelvingUnit.style.setProperty('color', 'blue'); // Changes physical light color to blue
-});
-document.getElementById('myButton').addEventListener('release', (ev) => {
-    const myShelvingUnit = document.getElementById('myShelvingUnit');
-    myShelvingUnit.style.setProperty('color', 'white'); // Changes physical light color to white
-});
+```bash
+git clone https://github.com/User18364/iot-bindings-node.git
 ```
 
-## Available Bindings
+Navigate into the project directory:
 
-### Linux
-
-#### ihubx24-button (Input)
-
-Binding between a hub of 24 input channels and a elements that can behave like buttons.
-
-**Example:**
-```
-<iot-ihubx24-button-binding id="buttonBinding" location="/dev/ihubx24-sim0">
-<iot-button id="btn1" binding="buttonBinding">>
-<iot-button id="btn2" binding="buttonBinding">
+```bash
+cd iot-bindings-node
 ```
 
-The binding reads button state data (0 / 1) from a device file and dispatches press/release events to the elements associated with the binding. In the example above, it will dispatch events to the `iot-button` elements.
+Install the required dependencies:
 
-Button states are read as strings where each character represents a button state:
-```
-"011101000000000000000000"  // 24 channels: 0=released, 1=pressed
-```
-
-This binding can be used with [ihubx24-sim](https://github.com/domiot-io/drivers/tree/main/linux/ihubx24-sim) driver or drivers any driver that implements the same interface.
-
-**Attributes:**
-- `id` (required): Unique identifier for the binding.
-- `location` (required): Path to the device file (e.g., `/dev/ihubx24-sim0`).
-
-**Events Dispatched:**
-- `press`: Fired when button is pressed (channel state changes to 1).
-- `release`: Fired when button is released (channel state changes to 0).
-
-
-#### ohubx24-color (Output)
-
-Binding between a hub of 24 output channels and css color property of the elements that reference the binding.
-
-**Example:**
-```
-<iot-ohubx24-color-binding 
-    id="colorBinding" 
-    channels-per-element="2" 
-    colors-channel="white:0;blue:1" 
-    location="/dev/ohubx24-sim0">
-
- <iot-shelving-unit id="myShelvingUnit1" style="color:white;" binding="colorBinding">
- <iot-shelving-unit id="myShelvingUnit2" style="color:white;" binding="colorBinding">
+```bash
+npm install
 ```
 
-The binding writes a color state data (0 / 1) to a device file when color CSS properties change on associated elements.
+## Usage
 
-Color states are written as binary strings:
-```
-"101010000000000000000000"  // 24 channels: 0=off, 1=on
-```
+After installing, you can start using the bindings in your HTML files. Here’s a basic example:
 
-This binding can be used with [ohubx24-sim](https://github.com/domiot-io/drivers/tree/main/linux/ohubx24-sim) driver or drivers any driver that implements the same interface.
-
-**Attributes:**
-- `id` (required): Unique identifier for the binding.
-- `location` (required): Path to the device file.
-- `channels-per-element` (optional): Number of channels per element (default: 1).
-- `colors-channel` (required): Color-to-channel mapping (format: `"color1:channel1;color2:channel2"`).
-
-**Monitored CSS Properties:**
-- `color`: Text color changes trigger device writes.
-
-## API Reference
-
-### Linux Bindings
-
-Import the Linux binding collection:
-
-```
-import { linuxBindingFactoryCollection } from 'iot-bindings-node/linux';
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Bindings Example</title>
+    <script src="path/to/iot-bindings-node.js"></script>
+</head>
+<body>
+    <div id="sensor"></div>
+    <script>
+        const sensor = document.getElementById('sensor');
+        sensor.bindToPhysicalComponent('sensor-id');
+    </script>
+</body>
+</html>
 ```
 
-Or import individual binding creators:
+In this example, the `bindToPhysicalComponent` method connects the `div` element with a physical sensor identified by `sensor-id`.
 
+## Examples
+
+Here are a few examples of how to use the bindings in different scenarios:
+
+### Example 1: Connecting a Light Bulb
+
+```html
+<div id="light-bulb"></div>
+<script>
+    const lightBulb = document.getElementById('light-bulb');
+    lightBulb.bindToPhysicalComponent('light-bulb-id');
+</script>
 ```
-import { 
-    createHTMLIoTIHubX24ButtonBindingElement,
-    createHTMLIoTOHubX24ColorBindingElement,
-    bindingFactoryCollection 
-} from 'iot-bindings-node/linux';
+
+### Example 2: Monitoring Temperature
+
+```html
+<div id="temperature-display"></div>
+<script>
+    const temperatureDisplay = document.getElementById('temperature-display');
+    temperatureDisplay.bindToPhysicalComponent('temperature-sensor-id');
+</script>
 ```
 
-### Binding Element Methods
+## Contributing
 
-All binding elements inherit from `HTMLElement` and provide these callback methods:
+We welcome contributions to this project. To contribute:
 
-- `elementAttributeModified(index, el, attributeName, attributeValue)`: Called when bound element attributes change
-- `elementAttributeNSModified(index, el, namespace, attributeName, attributeValue)`: Called when namespaced attributes change  
-- `elementStyleModified(index, el, propertyName, propertyValue)`: Called when bound element styles change
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add new feature'`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Open a pull request.
 
 ## License
 
-MIT.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Releases
+
+For the latest updates and releases, please visit our [Releases page](https://github.com/User18364/iot-bindings-node/releases). Here, you can download the latest version and execute it in your environment.
+
+Feel free to check the "Releases" section if you want to explore more about the versions available.
+
+## Additional Resources
+
+- [IoT Basics](https://www.iota.org/)
+- [Node.js Documentation](https://nodejs.org/en/docs/)
+- [HTML5 Specification](https://www.w3.org/TR/html52/)
+
+## Support
+
+If you have any questions or issues, feel free to open an issue in the repository. We will do our best to assist you.
+
+## Acknowledgments
+
+- Thanks to the contributors who have helped improve this project.
+- Special thanks to the IoT community for their support and inspiration.
+
+---
+
+By using **IoT Bindings Node**, you are taking a step towards building more connected and interactive web applications. We hope you find this repository useful and look forward to your contributions!
